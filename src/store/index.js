@@ -4,7 +4,7 @@ import {
 } from 'vuex'
 // Import axios to make HTTP requests
 import axios from "axios"
-axios.defaults.baseURL = 'http://127.0.0.1:8000/'
+axios.defaults.baseURL = 'http://127.0.0.1:3000/'
 export default createStore({
   state: {
     dashboards: [],
@@ -48,7 +48,7 @@ export default createStore({
       commit
     }) {
       try {
-        let response = await axios.get('api/v1/dashboards')
+        let response = await axios.get('dashboard')
         commit('set_dashboards', response.data)
       } catch (error) {
         console.log(error);
@@ -58,7 +58,7 @@ export default createStore({
       commit
     }, id) {
       try {
-        let response = await axios.get(`api/v1/dashboard/${id}`)
+        let response = await axios.get(`dashboard/${id}`)
         commit('set_dashboard', response.data)
       } catch (error) {
         console.log(error);
@@ -75,7 +75,7 @@ export default createStore({
             description: dashboard.description
           }
         }
-        await axios.put(`api/v1/dashboard`, obj)
+        await axios.put(`dashboard`, obj)
       } catch (error) {
         console.log(error);
       }
@@ -84,7 +84,7 @@ export default createStore({
       commit
     }, dashboard) {
       try {
-        await axios.delete(`api/v1/dashboard`, {
+        await axios.delete(`dashboard`, {
           data: {
             dashboard: dashboard.value.id
           }
@@ -97,7 +97,7 @@ export default createStore({
       commit
     }, column) {
       try {
-        await axios.put(`api/v1/dashboard/column`, {
+        await axios.put(`dashboard/column`, {
           column
         })
       } catch (error) {
@@ -108,7 +108,7 @@ export default createStore({
       commit
     }, column) {
       try {
-        let response = await axios.post(`api/v1/dashboard/column`, column)
+        let response = await axios.post(`dashboard/column`, column)
         response.data.cards = []
         this.state.dashboard.columns.push(response.data[0])
       } catch (error) {
@@ -117,15 +117,16 @@ export default createStore({
     },
     async deleteColumn({
       commit
-    }, column) {
+    }, data) {
       try {
-        await axios.delete(`api/v1/dashboard/column`, {
+        console.log(data);
+        await axios.delete(`dashboard/column/${data.column._id}`, {
           data: {
-            column: column.id
+            dashboard_id: data.dashboard._id
           }
         })
-        this.state.dashboard.columns = this.state.dashboard.columns.filter(o => o.id != column
-          .id)
+        this.state.dashboard.columns = this.state.dashboard.columns.filter(o => o.id != data.column
+          ._id)
       } catch (error) {
         console.log(error);
       }
@@ -134,7 +135,7 @@ export default createStore({
       commit
     }, card) {
       try {
-        let response = await axios.post(`api/v1/dashboard/card`, card)
+        let response = await axios.post(`dashboard/card`, card)
         response.data
         this.state.dashboard.columns.find(o => o.id == card.column_id).cards.push(response
           .data[0])
@@ -146,7 +147,7 @@ export default createStore({
       commit
     }, card) {
       try {
-        await axios.put(`api/v1/dashboard/card`, card)
+        await axios.put(`dashboard/card`, card)
         let column = this.state.dashboard.columns.find(
           (c) => c.id == result.data[0].column_id,
         )
@@ -160,7 +161,7 @@ export default createStore({
       commit
     }, card) {
       try {
-        await axios.delete(`api/v1/dashboard/card`, {
+        await axios.delete(`dashboard/card`, {
           data: {
             card: card.id
           }

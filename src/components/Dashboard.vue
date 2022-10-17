@@ -53,7 +53,7 @@ const previousName = ref('')
 const previousDescription = ref('')
 
 onMounted(async () => {
-    await store.dispatch('loadDashboard', +route.params.id)
+    await store.dispatch('loadDashboard', route.params.id)
 })
 
 /**
@@ -121,7 +121,7 @@ const deleteDashboard = async function () {
 const addColumn = async function () {
     try {
         loading_add_column.value = true
-        await store.dispatch('addColumn', { dashboard_id: +route.params.id, name: "default name", color: "#FFFFF" })
+        await store.dispatch('addColumn', { dashboard_id: route.params.id, name: "default name", color: "#FFFFF" })
         loading_add_column.value = false
         toast.success('Colonne ajoutée.')
     } catch (error) {

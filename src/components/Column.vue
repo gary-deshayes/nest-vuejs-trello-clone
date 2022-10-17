@@ -49,6 +49,7 @@ const props = defineProps({
 let editing = ref(false)
 let { column } = toRefs(props)
 let previousName = ref('')
+const dashboard = computed(() => store.state.dashboard)
 const card = computed(() => store.state.selected_card)
 const selectedColumn = computed(() => store.state.selected_column)
 
@@ -58,7 +59,7 @@ const selectedColumn = computed(() => store.state.selected_column)
 const deleteColumn = async function(){
     if(confirm('Vous êtes sûr de vouloir supprimer : ' + column.value.name)){
         let name = column.value.name
-        await store.dispatch('deleteColumn', column.value)
+        await store.dispatch('deleteColumn', { column: column.value, dashboard: dashboard.value })
         toast.success(`Colonne '${name}' supprimée avec succès.`)
     }
 }
@@ -119,7 +120,7 @@ const closeAllModals = function () {
  */
 const updateCard = async function () {
     if (!card.value.id) {
-        await store.dispatch('addCard', { card: card.value, column_id: selectedColumn.value.id })
+        await store.dispatch('addCard', { card: card.value, column_id: selectedColumn.value._id })
         toast.success('Carte ajoutée.')
     } else {
         await store.dispatch('updateCard', { card: card.value })
